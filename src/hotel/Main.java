@@ -1,62 +1,73 @@
 package hotel;
 
+import hotel.controlador.HotelControlador;
+import hotel.dao.HuespedArchivoDAO;
+import hotel.dao.IHuespedDAO;
+import hotel.dao.IReservaDAO;
+import hotel.dao.ReservaArchivoDAO;
 import hotel.modelo.*;
 import hotel.sistema.SistemaHotel;
+import hotel.vista.MenuConsola;
 
-import java.time.LocalDate;
-
+/**
+ * PATRÓN MVC — PUNTO DE ENTRADA:
+ * El Main inicializa todos los componentes y los conecta:
+ *
+ *   1. Crea el SistemaHotel con las habitaciones (Modelo)
+ *   2. Crea las implementaciones DAO (Persistencia)
+ *   3. Crea el Controlador inyectando Modelo y DAOs
+ *   4. Crea la Vista pasándole el Controlador
+ *   5. Inicia la Vista
+ *
+ * Esta separación aplica el principio de inversión de dependencias:
+ * el Controlador no sabe qué implementación de DAO se usa,
+ * y la Vista no sabe nada del Modelo ni de la persistencia.
+ */
 public class Main {
 
     public static void main(String[] args) {
 
-        // Sistema (Composición: el sistema posee todo)
-        SistemaHotel hotel = new SistemaHotel("Hotel Paraíso CR");
+        // ── 1. MODELO: Habitaciones ──────────────────────────────────────────
 
-        // Tipos de Habitacion
-        TipoHabitacion sencilla = new TipoHabitacion("SEN", "Sencilla", 70.0);
+        TipoHabitacion sencilla = new TipoHabitacion("SEN", "Sencilla",  70.0);
         TipoHabitacion doble    = new TipoHabitacion("DOB", "Doble",    140.0);
-        TipoHabitacion suite    = new TipoHabitacion("SUT", "Suite",   500.0);
+        TipoHabitacion suite    = new TipoHabitacion("SUT", "Suite",    350.0);
+        TipoHabitacion vip      = new TipoHabitacion("VIP", "VIP",      500.0);
 
-        // Habitaciones
-        hotel.agregarHabitacion(new Habitacion(101, 1, sencilla));
-        hotel.agregarHabitacion(new Habitacion(102, 1, sencilla));
-        hotel.agregarHabitacion(new Habitacion(201, 2, doble));
-        hotel.agregarHabitacion(new Habitacion(301, 3, suite));
+        SistemaHotel sistema = new SistemaHotel("Hotel Paraíso CR");
 
-        // Huéspedes
-        Huesped ana   = new Huesped("119610475", "Ana Mora",   "8687-7348", "ana@gmail.com");
-        Huesped carlos = new Huesped("119610476", "Carlos Díaz","8408-6521", "carlos@gmail.com");
-        hotel.registrarHuesped(ana);
-        hotel.registrarHuesped(carlos);
+        // Habitaciones estándar
+        sistema.agregarHabitacion(new Habitacion(101, 1, sencilla));
+        sistema.agregarHabitacion(new Habitacion(102, 1, sencilla));
+        sistema.agregarHabitacion(new Habitacion(201, 2, doble));
+        sistema.agregarHabitacion(new Habitacion(202, 2, doble));
+        sistema.agregarHabitacion(new Habitacion(301, 3, suite));
 
-        // Servicios Adicionales
-        ServicioAdicional desayuno = new ServicioAdicional("Desayuno buffet", 30.0, "Desayuno incluido");
-        ServicioAdicional spa      = new ServicioAdicional("Acceso al spa",   80.0, "Acceso por día");
+        // Habitaciones VIP — HERENCIA: HabitacionVIP extiende Habitacion
+        // POLIMORFISMO: se almacenan como Habitacion pero su toString() es el de VIP
+        sistema.agregarHabitacion(new HabitacionVIP(401, 4, vip, true,  true, "Vista al mar"));
+        sistema.agregarHabitacion(new HabitacionVIP(402, 4, vip, false, true, "Vista a la montaña"));
 
-        // Reserva
-        Habitacion hab201 = hotel.getHabitacionesDisponibles()
-                .stream()
-                .filter(h -> h.getNumero() == 201)
-                .findFirst()
-                .orElseThrow();
+        // ── 2. PERSISTENCIA: DAOs ────────────────────────────────────────────
 
-        Reserva reserva1 = new Reserva(
-                "RES-001",
-                LocalDate.now(),
-                LocalDate.now().plusDays(3),
-                ana,
-                hab201
+        IReservaDAO  reservaDAO  = new ReservaArchivoDAO();
+        IHuespedDAO  huespedDAO  = new HuespedArchivoDAO();
+
+        // ── 3. CONTROLADOR ───────────────────────────────────────────────────
+
+        HotelControlador controlador = new HotelControlador(
+                sistema.getNombre(),
+                sistema.getHabitaciones(),
+                reservaDAO,
+                huespedDAO
         );
-        reserva1.agregarServicio(desayuno);
-        reserva1.agregarServicio(spa);
-        hotel.registrarReserva(reserva1);
 
-        // Detalles Completos
-        reserva1.mostrarDetalle();
-        hotel.generarReporte();
+        // ── 4. VISTA ─────────────────────────────────────────────────────────
 
-        // 8. Cancelar reserva y verificar disponibilidad
-        hotel.cancelarReserva("RES-001");
-        hotel.generarReporte();
+        MenuConsola menu = new MenuConsola(controlador);
+
+        // ── 5. INICIAR ───────────────────────────────────────────────────────
+
+        menu.iniciar();
     }
 }

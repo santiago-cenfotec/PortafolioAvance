@@ -1,36 +1,31 @@
 package hotel.modelo;
 
-/*
- ABSTRACCIÓN: Representa un servicio extra (spa, desayuno, etc.) que puede contratarse junto con una reserva.
- DEPENDENCIA: Reserva depende de esta clase para calcular el total.
- ServicioAdicional puede existir sin ninguna Reserva activa.
+/**
+ * ABSTRACCIÓN: Representa un servicio extra (spa, desayuno, etc.)
+ * que puede añadirse a una reserva.
+ *
+ * DEPENDENCIA: Reserva depende de esta clase para calcular el total.
+ * ServicioAdicional puede existir sin ninguna Reserva activa.
  */
-
 public class ServicioAdicional {
 
     private String nombre;
     private double precio;
     private String descripcion;
 
-    //Constructor
+    // Constructor
     public ServicioAdicional(String nombre, double precio, String descripcion) {
-        this.nombre = nombre;
-        this.precio = precio;
+        this.nombre      = nombre;
+        this.precio      = precio;
         this.descripcion = descripcion;
     }
 
-    //Getters
-    public String getNombre() {
-        return nombre;
-    }
-    public double getPrecio() {
-        return precio;
-    }
-    public String getDescripcion() {
-        return descripcion;
-    }
+    // Getters
+    public String getNombre()      { return nombre; }
+    public double getPrecio()      { return precio; }
+    public String getDescripcion() { return descripcion; }
 
-    //Setters
+    // Setter con validación
     public void setPrecio(double precio) {
         if (precio >= 0) {
             this.precio = precio;
@@ -39,6 +34,6 @@ public class ServicioAdicional {
 
     @Override
     public String toString() {
-        return nombre + " ($" + precio + ")";
+        return nombre + " ($" + String.format("%.2f", precio) + ") — " + descripcion;
     }
 }

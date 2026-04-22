@@ -1,9 +1,12 @@
 package hotel.modelo;
 
-/*
- ABSTRACCIÓN: Hace una habitación del hotel.
-
- ASOCIACIÓN con TipoHabitacion: Habitacion tiene una referencia a TipoHabitacion, pero ambas pueden existir por separado.
+/**
+ * ABSTRACCIÓN: Modela una habitación del hotel con sus atributos esenciales.
+ *
+ * ASOCIACIÓN con TipoHabitacion: Habitacion tiene una referencia a TipoHabitacion,
+ * pero ambas pueden existir por separado (asociación simple).
+ *
+ * Esta clase sirve como SUPERCLASE para HabitacionVIP (herencia).
  */
 public class Habitacion {
 
@@ -12,7 +15,7 @@ public class Habitacion {
     private boolean disponible;
     private TipoHabitacion tipo;   // Asociación
 
-    //Constructor
+    // Constructor
     public Habitacion(int numero, int piso, TipoHabitacion tipo) {
         this.numero = numero;
         this.piso = piso;
@@ -20,29 +23,26 @@ public class Habitacion {
         this.disponible = true;   // Disponible por defecto al crearla
     }
 
-    //Getters
-    public int getNumero() {
-        return numero;
-    }
-    public int getPiso() {
-        return piso;
-    }
-    public boolean isDisponible() {
-        return disponible;
-    }
-    public TipoHabitacion getTipo() {
-        return tipo;
-    }
+    // Getters
+    public int getNumero() { return numero; }
+    public int getPiso() { return piso; }
+    public boolean isDisponible() { return disponible; }
+    public TipoHabitacion getTipo() { return tipo; }
 
-    //Setters
+    // Setters
     public void setDisponible(boolean disponible) {
         this.disponible = disponible;
     }
 
+    /**
+     * POLIMORFISMO: Este método es sobreescrito en HabitacionVIP
+     * para mostrar información adicional de la subclase.
+     */
     @Override
     public String toString() {
         String estado = disponible ? "Disponible" : "Ocupada";
         return "Hab. " + numero + " | Piso " + piso +
-                " | " + tipo.getDescripcion() + " | " + estado;
+                " | " + tipo.getDescripcion() + " | $" +
+                tipo.getPrecioPorNoche() + "/noche | " + estado;
     }
 }

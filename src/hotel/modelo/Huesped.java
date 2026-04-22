@@ -1,40 +1,34 @@
 package hotel.modelo;
 
-/*
- ABSTRACCIÓN: Representa solo los datos esenciales de un huésped que son relevantes para el sistema de reservas.
- ENCAPSULAMIENTO: Todos los atributos son privados; se acceden únicamente mediante getters y setters controlados.
+/**
+ * ABSTRACCIÓN: Representa solo los datos esenciales de un huésped relevantes para reservas.
+ * ENCAPSULAMIENTO: Todos los atributos son privados; se acceden mediante getters y setters.
+ *
+ * Los setters incluyen validaciones para garantizar datos consistentes.
  */
 public class Huesped {
 
-    // Atributos Privados / Encapsulamiento
+    // Atributos privados — Encapsulamiento
     private String cedula;
     private String nombre;
     private String telefono;
     private String correo;
 
-    // Constructor Completo
+    // Constructor completo
     public Huesped(String cedula, String nombre, String telefono, String correo) {
-        this.cedula = cedula;
-        this.nombre = nombre;
+        this.cedula   = cedula;
+        this.nombre   = nombre;
         this.telefono = telefono;
-        this.correo = correo;
+        this.correo   = correo;
     }
 
     // Getters
-    public String getCedula() {
-        return cedula;
-    }
-    public String getNombre() {
-        return nombre;
-    }
-    public String getTelefono() {
-        return telefono;
-    }
-    public String getCorreo() {
-        return correo;
-    }
+    public String getCedula()   { return cedula; }
+    public String getNombre()   { return nombre; }
+    public String getTelefono() { return telefono; }
+    public String getCorreo()   { return correo; }
 
-    // Setters
+    // Setters con validación
     public void setTelefono(String telefono) {
         if (telefono != null && !telefono.isBlank()) {
             this.telefono = telefono;
